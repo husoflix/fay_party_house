@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yönetim Girişi | Fay Party House</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/admin/assets/admin.css" rel="stylesheet">
+</head>
+<body class="login-body">
+  <main class="login-card">
+    <div class="text-center mb-4">
+      <div class="login-icon"><i class="bi bi-cake2-fill"></i></div>
+      <h1 class="brand">Fay <span>Party House</span></h1>
+      <p class="text-muted mb-0">Yönetim paneli girişi</p>
+    </div>
+    <form id="loginForm" novalidate>
+      <div class="mb-3">
+        <label for="password" class="form-label">Şifre</label>
+        <div class="input-group input-group-lg">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input type="password" class="form-control" id="password" autocomplete="current-password" placeholder="••••••••" required autofocus>
+          <button class="btn btn-outline-secondary" type="button" id="togglePw" aria-label="Şifreyi göster"><i class="bi bi-eye"></i></button>
+        </div>
+      </div>
+      <div class="alert alert-danger py-2 d-none" id="loginError" role="alert"></div>
+      <button type="submit" class="btn btn-party btn-lg w-100" id="loginBtn">Giriş Yap</button>
+    </form>
+    <a href="/" class="d-block text-center mt-4 small back-link"><i class="bi bi-arrow-left"></i> Siteye dön</a>
+  </main>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const pw = document.getElementById('password');
+    const err = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+
+    document.getElementById('togglePw').addEventListener('click', (e) => {
+      const show = pw.type === 'password';
+      pw.type = show ? 'text' : 'password';
+      e.currentTarget.innerHTML = `<i class="bi bi-eye${show ? '-slash' : ''}"></i>`;
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.classList.add('d-none');
+      btn.disabled = true;
+      btn.textContent = 'Kontrol ediliyor…';
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pw.value }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Giriş başarısız.');
+        location.href = '/admin';
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.classList.remove('d-none');
+        pw.select();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Giriş Yap';
+      }
+    });
+  </script>
+</body>
+</html>

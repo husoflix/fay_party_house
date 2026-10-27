@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yönetim Paneli | Fay Party House</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/admin/assets/admin.css" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand side-brand">Fay <span>Party House</span></div>
+      <nav class="side-nav">
+        <button class="side-link active" data-tab="products"><i class="bi bi-grid-fill"></i> Ürünler</button>
+        <button class="side-link" data-tab="categories"><i class="bi bi-tags-fill"></i> Kategoriler</button>
+        <button class="side-link" data-tab="settings"><i class="bi bi-gear-fill"></i> Ayarlar</button>
+      </nav>
+      <div class="side-bottom">
+        <a href="/" target="_blank" class="side-link"><i class="bi bi-box-arrow-up-right"></i> Siteyi Gör</a>
+        <button class="side-link" id="logoutBtn"><i class="bi bi-box-arrow-left"></i> Çıkış Yap</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="content">
+      <header class="topbar">
+        <button class="btn btn-light d-lg-none" id="menuToggle" aria-label="Menü"><i class="bi bi-list fs-4"></i></button>
+        <h1 class="page-title" id="pageTitle">Ürünler</h1>
+        <div class="ms-auto" id="topAction">
+          <button class="btn btn-party" id="addProductBtn"><i class="bi bi-plus-lg"></i> Yeni Ürün</button>
+        </div>
+      </header>
+
+      <main class="p-3 p-lg-4">
+        <!-- ÜRÜNLER -->
+        <section id="tab-products" class="tab-pane-x">
+          <div class="row g-3 mb-4" id="stats"></div>
+          <div class="panel-card">
+            <div class="row g-2 mb-3">
+              <div class="col-md-6"><input type="search" id="searchBox" class="form-control" placeholder="Ürün ara…"></div>
+              <div class="col-md-6"><select id="filterCat" class="form-select"><option value="">Tüm kategoriler</option></select></div>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle product-table">
+                <thead><tr><th>Görsel</th><th>Ürün</th><th>Kategori</th><th>Fiyat</th><th>Durum</th><th class="text-end">İşlem</th></tr></thead>
+                <tbody id="productRows"></tbody>
+              </table>
+            </div>
+            <p class="text-center text-muted py-4 d-none" id="noProducts">Ürün bulunamadı.</p>
+          </div>
+        </section>
+
+        <!-- KATEGORİLER -->
+        <section id="tab-categories" class="tab-pane-x d-none">
+          <div class="panel-card">
+            <form class="row g-2 mb-4" id="catForm">
+              <div class="col"><input type="text" id="catName" class="form-control" placeholder="Yeni kategori adı (ör. Dondurmalar)" maxlength="50" required></div>
+              <div class="col-auto"><button class="btn btn-party" type="submit"><i class="bi bi-plus-lg"></i> Ekle</button></div>
+            </form>
+            <ul class="list-group list-group-flush" id="catList"></ul>
+          </div>
+        </section>
+
+        <!-- AYARLAR -->
+        <section id="tab-settings" class="tab-pane-x d-none">
+          <div class="panel-card" style="max-width: 520px;">
+            <h2 class="h5 mb-3"><i class="bi bi-shield-lock me-2 text-rose"></i>Şifre Değiştir</h2>
+            <form id="pwForm">
+              <div class="mb-3"><label class="form-label" for="curPw">Mevcut şifre</label><input type="password" id="curPw" class="form-control" autocomplete="current-password" required></div>
+              <div class="mb-3"><label class="form-label" for="newPw">Yeni şifre (en az 6 karakter)</label><input type="password" id="newPw" class="form-control" autocomplete="new-password" minlength="6" required></div>
+              <button class="btn btn-party" type="submit">Şifreyi Güncelle</button>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ÜRÜN MODALI -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="pmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <form class="modal-content" id="productForm" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="pmTitle">Yeni Ürün</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="pId">
+          <div class="row g-3">
+            <div class="col-md-5">
+              <label class="form-label">Görsel</label>
+              <label class="img-drop" for="pImage">
+                <img id="pPreview" src="/images/placeholders/cake.svg" alt="Önizleme">
+                <span><i class="bi bi-cloud-arrow-up"></i> Görsel seç</span>
+              </label>
+              <input type="file" id="pImage" accept="image/png,image/jpeg,image/webp,image/gif" class="d-none">
+              <div class="form-text">JPG, PNG, WEBP · en fazla 5 MB</div>
+            </div>
+            <div class="col-md-7">
+              <div class="mb-3"><label class="form-label" for="pName">Ürün adı *</label><input type="text" id="pName" class="form-control" maxlength="100" required></div>
+              <div class="row g-2 mb-3">
+                <div class="col-6"><label class="form-label" for="pPrice">Fiyat (₺) *</label><input type="number" step="0.01" min="0" id="pPrice" class="form-control" required></div>
+                <div class="col-6"><label class="form-label" for="pCat">Kategori</label><select id="pCat" class="form-select"></select></div>
+              </div>
+              <div class="mb-3"><label class="form-label" for="pDesc">Açıklama</label><textarea id="pDesc" rows="3" maxlength="500" class="form-control"></textarea></div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="pAvail" checked>
+                <label class="form-check-label" for="pAvail">Satışta</label>
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-danger py-2 mt-3 mb-0 d-none" id="pError"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Vazgeç</button>
+          <button type="submit" class="btn btn-party" id="pSave">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toast" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite">
+      <div class="d-flex"><div class="toast-body" id="toastMsg"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Kapat"></button></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/admin/assets/admin.js"></script>
+</body>
+</html>
